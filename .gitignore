@@ -1,7 +1,4 @@
 build/**
 .*
-out/**
 src/dll/include/**
 src/dll/lib/**
-*.cmake
-*.bat
