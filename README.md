@@ -6,7 +6,7 @@ Disables 'auto' gear shifting in favor of manual shifting through custom keybind
 
 ## Installation2
 
-1. Get the latest release [here](https://github.com/Ferrster/Snowrunner-Manual-Gearbox-Mod/releases)
+1. Get the latest release [here](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/releases)
 1. Extract _.dll_ and _.exe_ files from archive into the game folder, where _SnowRunner.exe_ is located
 1. Start SnowRunner
 1. Run _smgm-loader.exe_ to apply the mod
@@ -70,7 +70,3 @@ To apply new changes you must restart the mod.
 * No engine stalling
 * You can use _Diff Lock_ when the truck is on first gear. But only while you hold the in-game key for shifting gears
 * Key presses are captured even when game is collapsed
-
-## Building
-
-Todo...
