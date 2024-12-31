@@ -1,0 +1,11 @@
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/CMakeFiles/DetoursLib.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/CMakeFiles/edit_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/CMakeFiles/rebuild_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/dll/CMakeFiles/smgm.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/dll/CMakeFiles/edit_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/dll/CMakeFiles/rebuild_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/injector/CMakeFiles/smgm-loader.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/injector/CMakeFiles/edit_cache.dir
+D:/Users/draft/Documents/GitHub/Snowrunner-Manual-Gearbox-Mod/out/build/x64-Debug/src/injector/CMakeFiles/rebuild_cache.dir
