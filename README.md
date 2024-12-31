@@ -4,7 +4,7 @@ Disables 'auto' gear shifting in favor of manual shifting through custom keybind
 
 **Currently Logitech Driving Force Shifter and other joystick-type devices are not supported, but I'm working on it.**
 
-## Installation
+## Installation2
 
 1. Get the latest release [here](https://github.com/Ferrster/Snowrunner-Manual-Gearbox-Mod/releases)
 1. Extract _.dll_ and _.exe_ files from archive into the game folder, where _SnowRunner.exe_ is located
