@@ -17,6 +17,8 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+extern void Detach();
+
 namespace smgm {
 
 inline const WORD FromHex(const std::string &value) {
@@ -28,6 +30,7 @@ const std::unordered_map<InputDeviceType, std::unordered_map<InputAction, WORD>>
                 {
                     {SHIFT_PREV_AUTO_GEAR, VK_LCONTROL},
                     {SHIFT_NEXT_AUTO_GEAR, VK_LMENU},
+                    //{DETACH_FROM_GAME, VK_F1}
                 }},
                {JOYSTICK,
                 {
@@ -125,13 +128,13 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
   std::unique_lock lck(m_mtx);
 
   static const auto ReadKeybindings =
-      [](const boost::property_tree::ptree &pt,
+      [this](const boost::property_tree::ptree &pt,
          const std::string &key) -> std::unordered_map<WORD, FncOnPressed> {
     std::unordered_map<WORD, FncOnPressed> result;
 
     boost::mp11::mp_for_each<
-        boost::describe::describe_enumerators<InputAction>>([&](auto D) {
-      const auto action = [&]() -> FncOnPressed {
+        boost::describe::describe_enumerators<InputAction>>([&, this](auto D) {
+      const auto action = [&, this]() -> FncOnPressed {
         static const auto ShiftGearFnc = [](std::int32_t gear) {
           return [gear] {
             if (auto *veh = smgm::GetCurrentVehicle()) {
@@ -200,6 +203,10 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
             if (auto *veh = smgm::GetCurrentVehicle()) {
               veh->ShiftToReverseGear();
             }
+          };
+        case DETACH_FROM_GAME:
+          return [this] {
+              Detach();
           };
         }
 

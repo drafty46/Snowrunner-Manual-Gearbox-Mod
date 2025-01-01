@@ -32,6 +32,10 @@ std::atomic_bool g_Shutdown = false;
 smgm::InputReader *g_InputReader = nullptr;
 smgm::IniConfig g_IniConfig;
 
+void Detach() {
+    g_InputReader->Stop();
+}
+
 DWORD WINAPI MainThread(LPVOID param) {
   g_InputReader->WaitForThread();
 
@@ -67,7 +71,6 @@ void Init(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
   smgm::AttachHooks();
 
   g_InputReader = new smgm::InputReader;
-  g_InputReader->BindKeyboard(VK_F1, [] { g_InputReader->Stop(); });
   g_InputReader->ReadInputConfig(g_IniConfig);
   g_InputReader->Start();
 
