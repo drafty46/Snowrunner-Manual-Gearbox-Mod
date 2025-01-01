@@ -35,7 +35,7 @@ const std::unordered_map<InputDeviceType, std::unordered_map<InputAction, WORD>>
                 {
                     {SHIFT_PREV_AUTO_GEAR, VK_LCONTROL},
                     {SHIFT_NEXT_AUTO_GEAR, VK_LMENU},
-                    //{DETACH_FROM_GAME, VK_F1}
+                    {DETACH_FROM_GAME, VK_F10}
                 }},
                {JOYSTICK,
                 {
