@@ -39,8 +39,8 @@ const std::unordered_map<InputDeviceType, std::unordered_map<InputAction, WORD>>
                 }},
                {JOYSTICK,
                 {
-                    //{SHIFT_PREV_AUTO_GEAR, VK_PAD_DPAD_LEFT},
-                    //{SHIFT_NEXT_AUTO_GEAR, VK_PAD_DPAD_RIGHT},
+                    {SHIFT_PREV_AUTO_GEAR, VK_PAD_DPAD_LEFT},
+                    {SHIFT_NEXT_AUTO_GEAR, VK_PAD_DPAD_RIGHT},
                 }}};
 
 InputReader::InputReader() { LOG_DEBUG("Input reader created"); }
