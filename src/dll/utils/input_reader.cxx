@@ -165,6 +165,14 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
           return ShiftGearFnc(7);
         case SHIFT_8_GEAR:
           return ShiftGearFnc(8);
+        case SHIFT_9_GEAR:
+            return ShiftGearFnc(9);
+        case SHIFT_10_GEAR:
+            return ShiftGearFnc(10);
+        case SHIFT_11_GEAR:
+            return ShiftGearFnc(11);
+        case SHIFT_12_GEAR:
+            return ShiftGearFnc(12);
         case SHIFT_HIGH_GEAR:
           return [] {
             if (auto *veh = smgm::GetCurrentVehicle()) {

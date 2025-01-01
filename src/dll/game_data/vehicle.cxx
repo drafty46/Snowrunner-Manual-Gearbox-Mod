@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+extern smgm::IniConfig g_IniConfig;
+
 void Vehicle::SetPowerCoef(float coef) { TruckAction->PowerCoef = coef; }
 
 std::int32_t Vehicle::GetMaxGear() const {
@@ -26,7 +28,7 @@ bool Vehicle::ShiftToNextGear() {
   std::int32_t gear = TruckAction->Gear_1 + 1;
 
   // Skip Neutral
-  if (gear == 0) {
+  if (gear == 0 && g_IniConfig.Get<bool>("SMGM.SkipNeutral")) {
     gear = 1;
   }
 
@@ -37,7 +39,7 @@ bool Vehicle::ShiftToPrevGear() {
   auto gear = static_cast<std::int32_t>(TruckAction->Gear_1) - 1;
 
   // Skip Neutral
-  if (gear == 0) {
+  if (gear == 0 && g_IniConfig.Get<bool>("SMGM.SkipNeutral")) {
     gear = -1;
   }
 
