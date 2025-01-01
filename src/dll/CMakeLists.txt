@@ -23,7 +23,7 @@ add_library(${TARGET_NAME} SHARED
     custom_functions.h
     custom_functions.cxx
     main.cxx
-)
+ "utils/keymap.h" "utils/keymap.cxx")
 target_compile_definitions(${TARGET_NAME}
     PUBLIC BOOST_USE_WINAPI_VERSION=1536 # <= Win Vista
     PUBLIC NOMINMAX

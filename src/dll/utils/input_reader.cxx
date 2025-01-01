@@ -12,10 +12,15 @@
 #include <utility>
 #include <winerror.h>
 #include <winuser.h>
+#include "utils/keymap.h"
 
 #include <boost/mp11.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+
+extern std::unordered_map<std::string, WORD> VKToHexMap;
+
+extern std::unordered_map<WORD, std::string> HexToVKMap;
 
 extern void Detach();
 
@@ -34,8 +39,8 @@ const std::unordered_map<InputDeviceType, std::unordered_map<InputAction, WORD>>
                 }},
                {JOYSTICK,
                 {
-                    {SHIFT_PREV_AUTO_GEAR, VK_PAD_DPAD_LEFT},
-                    {SHIFT_NEXT_AUTO_GEAR, VK_PAD_DPAD_RIGHT},
+                    //{SHIFT_PREV_AUTO_GEAR, VK_PAD_DPAD_LEFT},
+                    //{SHIFT_NEXT_AUTO_GEAR, VK_PAD_DPAD_RIGHT},
                 }}};
 
 InputReader::InputReader() { LOG_DEBUG("Input reader created"); }
@@ -128,13 +133,13 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
   std::unique_lock lck(m_mtx);
 
   static const auto ReadKeybindings =
-      [this](const boost::property_tree::ptree &pt,
+      [](const boost::property_tree::ptree &pt,
          const std::string &key) -> std::unordered_map<WORD, FncOnPressed> {
     std::unordered_map<WORD, FncOnPressed> result;
 
     boost::mp11::mp_for_each<
-        boost::describe::describe_enumerators<InputAction>>([&, this](auto D) {
-      const auto action = [&, this]() -> FncOnPressed {
+        boost::describe::describe_enumerators<InputAction>>([&](auto D) {
+      const auto action = [&]() -> FncOnPressed {
         static const auto ShiftGearFnc = [](std::int32_t gear) {
           return [gear] {
             if (auto *veh = smgm::GetCurrentVehicle()) {
@@ -205,7 +210,7 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
             }
           };
         case DETACH_FROM_GAME:
-          return [this] {
+          return [] {
               Detach();
           };
         }
@@ -220,7 +225,21 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
           fmt::format("{}: {}", iniKey, v.has_value() ? v.value() : "<empty>"));
 
       if (v.has_value() && !v.value().empty()) {
-        result.insert({FromHex(v.value()), std::move(action)});
+        std::string keyString = v.value();
+        keyString.erase(0, keyString.find_first_not_of(" \t"));
+        keyString.erase(keyString.find_last_not_of(" \t") + 1);
+
+        auto keyValue = VKToHexMap.find(keyString);
+        if (keyValue != VKToHexMap.end()) {
+            LOG_DEBUG("Found key: " + keyString + " -> " + std::to_string(keyValue->second));
+        }
+        else {
+            LOG_DEBUG("Key not found: " + keyString);
+        }
+        result.insert({keyValue->second, std::move(action)});
+      }
+      else {
+          LOG_DEBUG("No value found for key: " + iniKey);
       }
     });
 
@@ -261,8 +280,9 @@ void InputReader::WriteDefaultConfig(IniConfig &config) {
                   return {};
                 }
 
-                return fmt::format("{:#x}",
-                                   deviceDefaultKbs.at(deInputAction.value));
+                auto keyValue = HexToVKMap.find(deviceDefaultKbs.at(deInputAction.value));
+
+                return fmt::format("{}",keyValue->second);
               }();
 
               config.GetConfig().put(fmt::format("{}.{}",

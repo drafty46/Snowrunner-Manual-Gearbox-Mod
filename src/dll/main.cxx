@@ -71,6 +71,7 @@ void Init(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
   smgm::AttachHooks();
 
   g_InputReader = new smgm::InputReader;
+  //g_InputReader->BindKeyboard(VK_F10, [] { g_InputReader->Stop(); });
   g_InputReader->ReadInputConfig(g_IniConfig);
   g_InputReader->Start();
 
