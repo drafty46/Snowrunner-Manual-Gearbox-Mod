@@ -33,32 +33,18 @@ std::atomic_bool g_Shutdown = false;
 smgm::InputReader *g_InputReader = nullptr;
 smgm::IniConfig g_IniConfig;
 
-void Detach() {
-    g_InputReader->Stop();
-}
-
-std::string GetActiveWindowExeName() {
+bool IsActiveWindowCurrentProcess() {
     HWND hwnd = GetForegroundWindow();
+    if (hwnd == NULL) {
+        return false;
+    }
+
     DWORD pid;
     GetWindowThreadProcessId(hwnd, &pid);
 
-    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
-    if (hProcess == nullptr) {
-        return "";
-    }
+    DWORD currentPid = GetCurrentProcessId();
 
-    char exePath[MAX_PATH];
-    if (GetModuleFileNameExA(hProcess, NULL, exePath, MAX_PATH)) {
-        CloseHandle(hProcess);
-
-        size_t pos = std::string(exePath).find_last_of("\\/");
-        std::string fileName = (pos != std::string::npos) ? std::string(exePath).substr(pos + 1) : exePath;
-
-        return fileName;
-    }
-
-    CloseHandle(hProcess);
-    return "";
+    return pid == currentPid;
 }
 
 DWORD WINAPI MainThread(LPVOID param) {
@@ -114,11 +100,22 @@ void Init(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
 }
 
 void Teardown(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
-  LOG_DEBUG("DLL Detach");
+    LOG_DEBUG("DLL Detach");
 
-  smgm::DetachHooks();
+    LOG_DEBUG("You can close this window");
+
+    smgm::DetachHooks();
+
 #ifndef SMGM_NO_CONSOLE
-  FreeConsole();
+    // First, get the console window before freeing it
+    HWND consoleWnd = GetConsoleWindow();
+    if (consoleWnd != nullptr) {
+        // Send a message to close the console window (forcefully destroy)
+        PostMessage(consoleWnd, WM_DESTROY, 0, 0);
+    }
+
+    // Detach the console from the process
+    FreeConsole();
 #endif
 }
 

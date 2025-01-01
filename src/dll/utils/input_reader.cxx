@@ -22,9 +22,7 @@ extern std::unordered_map<std::string, WORD> VKToHexMap;
 
 extern std::unordered_map<WORD, std::string> HexToVKMap;
 
-extern void Detach();
-
-extern std::string GetActiveWindowExeName();
+extern bool IsActiveWindowCurrentProcess();
 
 namespace smgm {
 
@@ -92,7 +90,7 @@ void InputReader::ProcessKeys() {
   while (!m_bStop) {
     std::shared_lock lck(m_mtx);
 
-    if (GetActiveWindowExeName() == "SnowRunner.exe") {
+    if (IsActiveWindowCurrentProcess()) {
         // Handle keyboard input
         for (auto& [key, info] : m_keysKeyboard) {
             if (GetAsyncKeyState(static_cast<SHORT>(key)) & 0x8000) {
@@ -139,13 +137,13 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
   std::unique_lock lck(m_mtx);
 
   static const auto ReadKeybindings =
-      [](const boost::property_tree::ptree &pt,
+      [this](const boost::property_tree::ptree &pt,
          const std::string &key) -> std::unordered_map<WORD, FncOnPressed> {
     std::unordered_map<WORD, FncOnPressed> result;
 
     boost::mp11::mp_for_each<
-        boost::describe::describe_enumerators<InputAction>>([&](auto D) {
-      const auto action = [&]() -> FncOnPressed {
+        boost::describe::describe_enumerators<InputAction>>([&, this](auto D) {
+      const auto action = [&, this]() -> FncOnPressed {
         static const auto ShiftGearFnc = [](std::int32_t gear) {
           return [gear] {
             if (auto *veh = smgm::GetCurrentVehicle()) {
@@ -224,8 +222,8 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
             }
           };
         case DETACH_FROM_GAME:
-          return [] {
-              Detach();
+          return [this] {
+              Stop();
           };
         }
 

@@ -1,6 +1,6 @@
 # SnowRunner Manual Gearbox Mod
 
-Disables 'auto' gear shifting in favor of manual shifting through custom keybindings for keyboard and gamepads.
+Disables 'auto' gear shifting in favor of manual shifting through custom keybindings for keyboard and gamepad.
 
 ## Installation
 
@@ -9,17 +9,21 @@ Disables 'auto' gear shifting in favor of manual shifting through custom keybind
 1. Start SnowRunner
 1. Run _smgm-loader.exe_ to apply the mod
 
+To run it automatically with the game **on steam** put _multiple.cmd_ in the same directory and then add its full path + %command% ex: \
+**"C:\Snowrunner\Game\SnowRunner\Sources\Bin\multiple.cmd" %command%**\
+as launch options
+
 ## Usage
 
-When you use the mod for the first time, it'll create a config file _(smgm.ini)_ near game's main _.exe_ file.
-There you can change keybinding for keyboard and for gamepad separately. By default, cycling through gears is done by **LCtrl** and **LAlt** on keyboards, and **DPad Left & Right** on gamepads. Keys are represented by [VK_](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/blob/master/src/dll/utils/keymap.cxx) values.
+When you use the mod for the first time, it'll create a config file _(smgm.ini)_ near game's main _.exe_ file.\
+There you can change keybindings for keyboard and for gamepad separately. By default, cycling through gears is done by **LCtrl** and **LAlt** on keyboard, and **DPad Left & Right** on gamepad. Keys are represented by [VK_](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/blob/master/src/dll/utils/keymap.cxx) values.
 
 ## Improvements
 
-Detaching can be bound in config
-Skipping neutral when shifting up/down can be disabed in config
-Added binds for up to 12 gears
-Added check that game is active window
+Detaching can be bound in config\
+Skipping neutral when shifting up/down can be disabed in config\
+Added binds for up to 12 gears\
+Added check that game is active window\
 Changed config to use VK_ instead of hex values
 
-## Credits to [Ferrster](https://github.com/Ferrster/Snowrunner-Manual-Gearbox-Mod) for original code
+## Credits to [Ferrster](https://github.com/Ferrster/Snowrunner-Manual-Gearbox-Mod) for the original code
