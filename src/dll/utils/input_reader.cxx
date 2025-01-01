@@ -24,6 +24,8 @@ extern std::unordered_map<WORD, std::string> HexToVKMap;
 
 extern void Detach();
 
+extern std::string GetActiveWindowExeName();
+
 namespace smgm {
 
 inline const WORD FromHex(const std::string &value) {
@@ -90,39 +92,43 @@ void InputReader::ProcessKeys() {
   while (!m_bStop) {
     std::shared_lock lck(m_mtx);
 
-    // Handle keyboard input
-    for (auto &[key, info] : m_keysKeyboard) {
-      if (GetAsyncKeyState(static_cast<SHORT>(key)) & 0x8000) {
-        if (!info.bPressed) {
-          info.bPressed = true;
+    if (GetActiveWindowExeName() == "SnowRunner.exe") {
+        // Handle keyboard input
+        for (auto& [key, info] : m_keysKeyboard) {
+            if (GetAsyncKeyState(static_cast<SHORT>(key)) & 0x8000) {
+                if (!info.bPressed) {
+                    info.bPressed = true;
 
-          if (info.onPressed) {
-            info.onPressed();
-          }
+                    if (info.onPressed) {
+                        info.onPressed();
+                    }
+                }
+            }
+            else {
+                info.bPressed = false;
+            }
         }
-      } else {
-        info.bPressed = false;
-      }
-    }
 
-    // Handle joystick input
-    for (int i = 0; i < XUSER_MAX_COUNT; ++i) {
-      if (XINPUT_KEYSTROKE ks; XInputGetKeystroke(i, 0, &ks) == ERROR_SUCCESS) {
-        if (m_keysJoystick.count(ks.VirtualKey) == 0) {
-          continue;
+        // Handle joystick input
+        for (int i = 0; i < XUSER_MAX_COUNT; ++i) {
+            if (XINPUT_KEYSTROKE ks; XInputGetKeystroke(i, 0, &ks) == ERROR_SUCCESS) {
+                if (m_keysJoystick.count(ks.VirtualKey) == 0) {
+                    continue;
+                }
+                KeyInfo& info = m_keysJoystick[ks.VirtualKey];
+
+                if (ks.Flags & XINPUT_KEYSTROKE_KEYDOWN) {
+                    info.bPressed = true;
+
+                    if (info.onPressed) {
+                        info.onPressed();
+                    }
+                }
+                else if (ks.Flags & XINPUT_KEYSTROKE_KEYUP) {
+                    info.bPressed = false;
+                }
+            }
         }
-        KeyInfo &info = m_keysJoystick[ks.VirtualKey];
-
-        if (ks.Flags & XINPUT_KEYSTROKE_KEYDOWN) {
-          info.bPressed = true;
-
-          if (info.onPressed) {
-            info.onPressed();
-          }
-        } else if (ks.Flags & XINPUT_KEYSTROKE_KEYUP) {
-          info.bPressed = false;
-        }
-      }
     }
   }
 

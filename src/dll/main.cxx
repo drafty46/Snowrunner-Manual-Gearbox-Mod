@@ -17,6 +17,7 @@
 #include <utility>
 #include <winerror.h>
 #include <winuser.h>
+#include <Psapi.h>
 
 #include "config/ini_config.hpp"
 #include "custom_functions.h"
@@ -34,6 +35,30 @@ smgm::IniConfig g_IniConfig;
 
 void Detach() {
     g_InputReader->Stop();
+}
+
+std::string GetActiveWindowExeName() {
+    HWND hwnd = GetForegroundWindow();
+    DWORD pid;
+    GetWindowThreadProcessId(hwnd, &pid);
+
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
+    if (hProcess == nullptr) {
+        return "";
+    }
+
+    char exePath[MAX_PATH];
+    if (GetModuleFileNameExA(hProcess, NULL, exePath, MAX_PATH)) {
+        CloseHandle(hProcess);
+
+        size_t pos = std::string(exePath).find_last_of("\\/");
+        std::string fileName = (pos != std::string::npos) ? std::string(exePath).substr(pos + 1) : exePath;
+
+        return fileName;
+    }
+
+    CloseHandle(hProcess);
+    return "";
 }
 
 DWORD WINAPI MainThread(LPVOID param) {
