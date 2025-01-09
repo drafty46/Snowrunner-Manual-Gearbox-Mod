@@ -3,6 +3,7 @@
 Disables 'auto' gear shifting in favor of manual shifting through custom keybindings for keyboard and gamepad.
 
 ## Installation
+* Requires [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
 
 1. Get the latest release [here](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/releases)
 1. Extract _.dll_ and _.exe_ files from archive into the game folder, where _SnowRunner.exe_ is located
