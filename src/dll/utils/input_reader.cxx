@@ -244,11 +244,11 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
         auto keyValue = VKToHexMap.find(keyString);
         if (keyValue != VKToHexMap.end()) {
             LOG_DEBUG("Found key: " + keyString + " -> " + std::to_string(keyValue->second));
+            result.insert({ keyValue->second, std::move(action) });
         }
         else {
             LOG_DEBUG("Key not found: " + keyString);
         }
-        result.insert({keyValue->second, std::move(action)});
       }
       else {
           LOG_DEBUG("No value found for key: " + iniKey);
