@@ -27,4 +27,4 @@ Added binds for up to 12 gears\
 Added check that game is active window\
 Changed config to use VK_ instead of hex values
 
-## Credits to [Ferrster](https://github.com/Ferrster/Snowrunner-Manual-Gearbox-Mod) for the original code
+## Credit to [Ferrster](https://github.com/Ferrster/Snowrunner-Manual-Gearbox-Mod) for the original code
