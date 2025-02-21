@@ -3,18 +3,23 @@
 Disables 'auto' gear shifting in favor of manual shifting through custom keybindings for keyboard and gamepad.
 
 ## Installation
-* Requires [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+
+#### Manual Loading
 
 1. Get the latest release [here](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/releases)
-1. Extract _.dll_ and _.exe_ files from archive into the game folder, where _SnowRunner.exe_ is located
+1. Place _smgm.dll_ and _smgm-loader.exe_ next to _SnmowRunner.exe_
 1. Start SnowRunner
-1. Run _smgm-loader.exe_ to apply the mod
+1. Run _smgm-loader.exe_ to load the mod
 
-To run it automatically with the game **on steam** put _multiple.cmd_ in the same directory and then add its full path + %command% ex: \
-**"C:\Snowrunner\Game\SnowRunner\Sources\Bin\multiple.cmd" %command%**\
-as launch options
+#### Automatic Loading
+1. Get the latest release [here](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/releases) and [TinyModLoader-x64](https://github.com/YAL-Game-Tools/TinyModInjector/releases)
+1. Place _dinput8.dll_ and _NativeMods_ folder next to _SnmowRunner.exe_ **and make sure to delete TinySampleMod.dll from _NativeMods_ folder**
+1. Place _smgm.dll_ inside _NativeMods_ folder
+1. Start SnowRunner and the mod should load automatically
 
 ## Usage
+
+#### **Warning! If you used the original mod by Ferrster before, you need to delete _smgm.ini_ as the config file is not compatible**
 
 When you use the mod for the first time, it'll create a config file _(smgm.ini)_ near game's main _.exe_ file.\
 There you can change keybindings for keyboard and for gamepad separately. By default, cycling through gears is done by **LCtrl** and **LAlt** on keyboard, and **DPad Left & Right** on gamepad. Keys are represented by [VK_](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/blob/master/src/dll/utils/keymap.cxx) values.
