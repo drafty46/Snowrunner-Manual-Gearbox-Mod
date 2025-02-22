@@ -19,9 +19,7 @@ Disables 'auto' gear shifting in favor of manual shifting through custom keybind
 
 ## Usage
 
-#### **Warning! If you used the original mod by Ferrster before, you need to delete _smgm.ini_ as the config file is not compatible**
-
-When you use the mod for the first time, it'll create a config file _(smgm.ini)_ near game's main _.exe_ file.\
+When you use the mod for the first time, it'll create a config file _(smgm++.ini)_ near game's main _.exe_ file.\
 There you can change keybindings for keyboard and for gamepad separately. By default, cycling through gears is done by **LCtrl** and **LAlt** on keyboard, and **DPad Left & Right** on gamepad. Keys are represented by [VK_](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/blob/master/src/dll/utils/keymap.cxx) values.
 
 ## Improvements

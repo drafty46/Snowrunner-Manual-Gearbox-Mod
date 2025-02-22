@@ -8,7 +8,7 @@
 extern smgm::InputReader *g_InputReader;
 
 namespace smgm {
-IniConfig::IniConfig() : m_path("smgm.ini") {}
+IniConfig::IniConfig() : m_path("smgm++.ini") {}
 
 IniConfig::IniConfig(const std::filesystem::path &path) : m_path(path) {
   ReadFrom(path);
