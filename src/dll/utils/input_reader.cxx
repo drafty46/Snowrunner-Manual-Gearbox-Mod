@@ -40,11 +40,12 @@ std::thread lowThread;
 
 void PatchedLowGear() {
     lowThreadStop.store(true);
+    if(lowThread.joinable()) { lowThread.join(); }
+    lowThreadStop.store(false);
     lowThread = std::thread([] {
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowGear();
         }
-        lowThreadStop.store(false);
         while (isClutchPressedKb || isClutchPressedJoy) { 
             if (lowThreadStop) { return; };
             std::this_thread::sleep_for(std::chrono::milliseconds(5)); 
@@ -54,16 +55,16 @@ void PatchedLowGear() {
             veh->ShiftToLowGear();
         }
     });
-    lowThread.detach();
 }
 
 void PatchedLowPlusGear() {
     lowThreadStop.store(true);
+    if (lowThread.joinable()) { lowThread.join(); }
+    lowThreadStop.store(false);
     lowThread = std::thread([] {
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowPlusGear();
         }
-        lowThreadStop.store(false);
         while (isClutchPressedKb || isClutchPressedJoy) {
             if (lowThreadStop) { return; };
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
@@ -73,16 +74,16 @@ void PatchedLowPlusGear() {
             veh->ShiftToLowPlusGear();
         }
         });
-    lowThread.detach();
 }
 
 void PatchedLowMinusGear() {
     lowThreadStop.store(true);
+    if (lowThread.joinable()) { lowThread.join(); }
+    lowThreadStop.store(false);
     lowThread = std::thread([] {
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowMinusGear();
         }
-        lowThreadStop.store(false);
         while (isClutchPressedKb || isClutchPressedJoy) {
             if (lowThreadStop) { return; };
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
@@ -92,7 +93,6 @@ void PatchedLowMinusGear() {
             veh->ShiftToLowMinusGear();
         }
         });
-    lowThread.detach();
 }
 
 namespace smgm {
@@ -303,6 +303,8 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
           };
         case DETACH_FROM_GAME:
           return [this] {
+            lowThreadStop.store(true);
+            if (lowThread.joinable()) { lowThread.join(); }
             Stop();
           };
         }
