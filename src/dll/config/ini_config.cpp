@@ -66,6 +66,7 @@ bool IniConfig::WriteDefaultConfig() {
 void IniConfig::WriteDefaultValues() {
   SetIfNotExists("SMGM.DisableGameShifting", true);
   SetIfNotExists("SMGM.SkipNeutral", true);
+  SetIfNotExists("SMGM.RequireClutch", false);
 }
 
 } // namespace smgm

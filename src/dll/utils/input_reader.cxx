@@ -22,7 +22,60 @@ extern std::unordered_map<std::string, WORD> VKToHexMap;
 
 extern std::unordered_map<WORD, std::string> HexToVKMap;
 
+extern smgm::IniConfig g_IniConfig;
+
+WORD clutchKb{};
+WORD clutchJoy{};
+
+WORD detachKb{};
+WORD detachJoy{};
+
 extern bool IsActiveWindowCurrentProcess();
+
+std::atomic<bool> isClutchPressedKb{};
+std::atomic<bool> isClutchPressedJoy{};
+
+void PatchedLowGear() {
+    std::thread lowThread([] {
+        if (auto* veh = smgm::GetCurrentVehicle()) {
+            veh->ShiftToLowGear();
+        }
+        while (isClutchPressedKb || isClutchPressedJoy) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); };
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if (auto* veh = smgm::GetCurrentVehicle()) {
+            veh->ShiftToLowGear();
+        }
+    });
+    lowThread.detach();
+}
+
+void PatchedLowPlusGear() {
+    std::thread lowThread([] {
+        if (auto* veh = smgm::GetCurrentVehicle()) {
+            veh->ShiftToLowPlusGear();
+        }
+        while (isClutchPressedKb || isClutchPressedJoy) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); };
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if (auto* veh = smgm::GetCurrentVehicle()) {
+            veh->ShiftToLowPlusGear();
+        }
+        });
+    lowThread.detach();
+}
+
+void PatchedLowMinusGear() {
+    std::thread lowThread([] {
+        if (auto* veh = smgm::GetCurrentVehicle()) {
+            veh->ShiftToLowMinusGear();
+        }
+        while (isClutchPressedKb || isClutchPressedJoy) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); };
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if (auto* veh = smgm::GetCurrentVehicle()) {
+            veh->ShiftToLowMinusGear();
+        }
+        });
+    lowThread.detach();
+}
 
 namespace smgm {
 
@@ -41,6 +94,7 @@ const std::unordered_map<InputDeviceType, std::unordered_map<InputAction, WORD>>
                 {
                     {SHIFT_PREV_AUTO_GEAR, VK_PAD_DPAD_LEFT},
                     {SHIFT_NEXT_AUTO_GEAR, VK_PAD_DPAD_RIGHT},
+                    {CLUTCH, VK_PAD_LSHOULDER}
                 }}};
 
 InputReader::InputReader() { LOG_DEBUG("Input reader created"); }
@@ -94,16 +148,22 @@ void InputReader::ProcessKeys() {
         // Handle keyboard input
         for (auto& [key, info] : m_keysKeyboard) {
             if (GetAsyncKeyState(static_cast<SHORT>(key)) & 0x8000) {
+                if (key == clutchKb) {
+                    isClutchPressedKb = true;
+                }
                 if (!info.bPressed) {
                     info.bPressed = true;
 
-                    if (info.onPressed) {
+                    if (info.onPressed && (isClutchPressedKb || isClutchPressedJoy || key == detachKb || !g_IniConfig.Get<bool>("SMGM.RequireClutch"))) {
                         info.onPressed();
                     }
                 }
             }
             else {
                 info.bPressed = false;
+                if (key == clutchKb) {
+                    isClutchPressedKb = false;
+                }
             }
         }
 
@@ -115,15 +175,24 @@ void InputReader::ProcessKeys() {
                 }
                 KeyInfo& info = m_keysJoystick[ks.VirtualKey];
 
-                if (ks.Flags & XINPUT_KEYSTROKE_KEYDOWN) {
-                    info.bPressed = true;
-
-                    if (info.onPressed) {
-                        info.onPressed();
+                if (ks.Flags & XINPUT_KEYSTROKE_KEYDOWN || ks.Flags & XINPUT_KEYSTROKE_REPEAT) {
+                    if (ks.VirtualKey == clutchJoy) {
+                        isClutchPressedJoy = true;
                     }
+                    if (!info.bPressed) {
+                        info.bPressed = true;
+
+                        if (info.onPressed && (isClutchPressedKb || isClutchPressedJoy || ks.VirtualKey == detachJoy || !g_IniConfig.Get<bool>("SMGM.RequireClutch"))) {
+                            info.onPressed();
+                        }
+                    }
+
                 }
                 else if (ks.Flags & XINPUT_KEYSTROKE_KEYUP) {
                     info.bPressed = false;
+                    if (ks.VirtualKey == clutchJoy) {
+                        isClutchPressedJoy = false;
+                    }
                 }
             }
         }
@@ -185,21 +254,15 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
           };
         case SHIFT_LOW_GEAR:
           return [] {
-            if (auto *veh = smgm::GetCurrentVehicle()) {
-              veh->ShiftToLowGear();
-            }
+            PatchedLowGear();
           };
         case SHIFT_LOW_PLUS_GEAR:
           return [] {
-            if (auto *veh = smgm::GetCurrentVehicle()) {
-              veh->ShiftToLowPlusGear();
-            }
+            PatchedLowPlusGear();
           };
         case SHIFT_LOW_MINUS_GEAR:
           return [] {
-            if (auto *veh = smgm::GetCurrentVehicle()) {
-              veh->ShiftToLowMinusGear();
-            }
+            PatchedLowMinusGear();
           };
         case SHIFT_NEUTRAL:
           return ShiftGearFnc(0);
@@ -223,7 +286,7 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
           };
         case DETACH_FROM_GAME:
           return [this] {
-              Stop();
+            Stop();
           };
         }
 
@@ -245,6 +308,18 @@ bool InputReader::ReadInputConfig(const IniConfig &config) {
         if (keyValue != VKToHexMap.end()) {
             LOG_DEBUG("Found key: " + keyString + " -> " + std::to_string(keyValue->second));
             result.insert({ keyValue->second, std::move(action) });
+            if (iniKey == "KEYBOARD.CLUTCH") {
+                clutchKb = keyValue->second;
+            }
+            if (iniKey == "JOYSTICK.CLUTCH") {
+                clutchJoy = keyValue->second;
+            }
+            if (iniKey == "KEYBOARD.DETACH_FROM_GAME") {
+                detachKb = keyValue->second;
+            }
+            if (iniKey == "JOYSTICK.DETACH_FROM_GAME") {
+                detachJoy = keyValue->second;
+            }
         }
         else {
             LOG_DEBUG("Key not found: " + keyString);
