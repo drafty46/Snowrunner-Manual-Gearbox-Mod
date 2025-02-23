@@ -35,12 +35,20 @@ extern bool IsActiveWindowCurrentProcess();
 std::atomic<bool> isClutchPressedKb{};
 std::atomic<bool> isClutchPressedJoy{};
 
+std::atomic<bool> lowThreadStop{};
+std::thread lowThread;
+
 void PatchedLowGear() {
-    std::thread lowThread([] {
+    lowThreadStop.store(true);
+    lowThread = std::thread([] {
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowGear();
         }
-        while (isClutchPressedKb || isClutchPressedJoy) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); };
+        lowThreadStop.store(false);
+        while (isClutchPressedKb || isClutchPressedJoy) { 
+            if (lowThreadStop) { return; };
+            std::this_thread::sleep_for(std::chrono::milliseconds(5)); 
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowGear();
@@ -50,11 +58,16 @@ void PatchedLowGear() {
 }
 
 void PatchedLowPlusGear() {
-    std::thread lowThread([] {
+    lowThreadStop.store(true);
+    lowThread = std::thread([] {
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowPlusGear();
         }
-        while (isClutchPressedKb || isClutchPressedJoy) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); };
+        lowThreadStop.store(false);
+        while (isClutchPressedKb || isClutchPressedJoy) {
+            if (lowThreadStop) { return; };
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowPlusGear();
@@ -64,11 +77,16 @@ void PatchedLowPlusGear() {
 }
 
 void PatchedLowMinusGear() {
-    std::thread lowThread([] {
+    lowThreadStop.store(true);
+    lowThread = std::thread([] {
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowMinusGear();
         }
-        while (isClutchPressedKb || isClutchPressedJoy) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); };
+        lowThreadStop.store(false);
+        while (isClutchPressedKb || isClutchPressedJoy) {
+            if (lowThreadStop) { return; };
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (auto* veh = smgm::GetCurrentVehicle()) {
             veh->ShiftToLowMinusGear();
