@@ -7,13 +7,13 @@ Disables 'auto' gear shifting in favor of manual shifting through custom keybind
 #### Manual Loading
 
 1. Get the latest release [here](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/releases)
-1. Place _smgm.dll_ and _smgm-loader.exe_ next to _SnmowRunner.exe_
+1. Place _smgm.dll_ and _smgm-loader.exe_ next to _SnowRunner.exe_
 1. Start SnowRunner
 1. Run _smgm-loader.exe_ to load the mod
 
 #### Automatic Loading
 1. Get the latest release [here](https://github.com/drafty46/Snowrunner-Manual-Gearbox-Mod/releases) and [TinyModLoader-x64](https://github.com/YAL-Game-Tools/TinyModInjector/releases)
-1. Place _dinput8.dll_ and _NativeMods_ folder next to _SnmowRunner.exe_ **and make sure to delete TinySampleMod.dll from _NativeMods_ folder**
+1. Place _dinput8.dll_ and _NativeMods_ folder next to _SnowRunner.exe_ **and make sure to delete TinySampleMod.dll from _NativeMods_ folder**
 1. Place _smgm.dll_ inside _NativeMods_ folder
 1. Start SnowRunner and the mod should load automatically
 
